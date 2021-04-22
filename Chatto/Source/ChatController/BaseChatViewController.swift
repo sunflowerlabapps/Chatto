@@ -240,8 +240,11 @@ open class BaseChatViewController: UIViewController,
         self.view.addConstraint(self.inputContainerBottomConstraint)
     }
 
-    private func addInputView() {
+    func addInputView() {
         let inputView = self.createChatInputView()
+        for view in inputBarContainer.subviews {
+            view.removeFromSuperview()
+        }
         self.inputBarContainer.addSubview(inputView)
         NSLayoutConstraint.activate([
             self.inputBarContainer.topAnchor.constraint(equalTo: inputView.topAnchor),
