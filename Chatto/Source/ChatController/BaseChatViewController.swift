@@ -130,7 +130,6 @@ open class BaseChatViewController: UIViewController,
         super.viewDidLoad()
         self.addCollectionView()
         self.addInputBarContainer()
-        self.addInputView()
         self.addInputContentContainer()
         self.setupKeyboardTracker()
         self.setupTapGestureRecognizer()
