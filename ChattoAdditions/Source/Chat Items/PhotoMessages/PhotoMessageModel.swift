@@ -28,20 +28,27 @@ import Chatto
 public protocol PhotoMessageModelProtocol: DecoratedMessageModelProtocol, ContentEquatableChatItemProtocol {
     var image: UIImage { get }
     var imageSize: CGSize { get }
+    var title: String { get }
+    var imageUrl: String { get }
 }
 
 open class PhotoMessageModel<MessageModelT: MessageModelProtocol>: PhotoMessageModelProtocol {
+
     public var messageModel: MessageModelProtocol {
         return self._messageModel
     }
     public let _messageModel: MessageModelT // Can't make messageModel: MessageModelT: https://gist.github.com/diegosanchezr/5a66c7af862e1117b556
     public let image: UIImage
     public let imageSize: CGSize
-    public var canReply: Bool { self.messageModel.canReply }
-    public init(messageModel: MessageModelT, imageSize: CGSize, image: UIImage) {
+    public let title: String
+    public var imageUrl: String
+    public var canReply: Bool  { self.messageModel.canReply }
+    public init(messageModel: MessageModelT, imageSize: CGSize, image: UIImage, title: String, imageUrl: String) {
         self._messageModel = messageModel
         self.imageSize = imageSize
         self.image = image
+        self.title = title
+        self.imageUrl = imageUrl
     }
     public func hasSameContent(as anotherItem: ChatItemProtocol) -> Bool {
         guard let anotherMessageModel = anotherItem as? PhotoMessageModel else { return false }

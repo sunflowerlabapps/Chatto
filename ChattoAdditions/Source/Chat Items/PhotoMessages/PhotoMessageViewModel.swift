@@ -41,12 +41,15 @@ public protocol PhotoMessageViewModelProtocol: DecoratedMessageViewModelProtocol
     var transferProgress: Observable<Double> { get  set } // in [0,1]
     var transferStatus: Observable<TransferStatus> { get set }
     var image: Observable<UIImage?> { get set }
+    var imageUrl: Observable<String?> { get set }
+    var title: Observable<String?> { get set }
     var imageSize: CGSize { get }
     var cellAccessibilityIdentifier: String { get }
     var bubbleAccessibilityIdentifier: String { get }
 }
 
 open class PhotoMessageViewModel<PhotoMessageModelT: PhotoMessageModelProtocol>: PhotoMessageViewModelProtocol {
+
     public var photoMessage: PhotoMessageModelProtocol {
         return self._photoMessage
     }
@@ -55,6 +58,8 @@ open class PhotoMessageViewModel<PhotoMessageModelT: PhotoMessageModelProtocol>:
     public var transferProgress: Observable<Double> = Observable(0)
     public var transferDirection: Observable<TransferDirection> = Observable(.download)
     public var image: Observable<UIImage?>
+    public var imageUrl: Observable<String?>
+    public var title: Observable<String?>
     open var imageSize: CGSize {
         return self.photoMessage.imageSize
     }
@@ -69,6 +74,8 @@ open class PhotoMessageViewModel<PhotoMessageModelT: PhotoMessageModelProtocol>:
         self._photoMessage = photoMessage
         self.image = Observable(photoMessage.image)
         self.messageViewModel = messageViewModel
+        self.title = Observable(photoMessage.title)
+        self.imageUrl = Observable(photoMessage.imageUrl)
     }
 
     open func willBeShown() {

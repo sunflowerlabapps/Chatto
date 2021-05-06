@@ -55,6 +55,7 @@ open class PhotoBubbleView: UIView, MaximumLayoutWidthSpecificable, BackgroundSi
     private func commonInit() {
         self.autoresizesSubviews = false
         self.addSubview(self.imageView)
+        self.addSubview(self.labelDocumentName)
         self.addSubview(self.placeholderIconView)
         self.addSubview(self.progressIndicatorView)
     }
@@ -67,6 +68,26 @@ open class PhotoBubbleView: UIView, MaximumLayoutWidthSpecificable, BackgroundSi
         imageView.contentMode = .scaleAspectFill
         imageView.addSubview(self.borderView)
         return imageView
+    }()
+    
+    public private(set) lazy var labelDocumentName: UILabel = {
+        let lblDocument = UILabel(frame: imageView.bounds)
+        lblDocument.text = "6 Self-Help Strategies to Overcome General Anxiety"
+        lblDocument.textColor = UIColor.white
+        lblDocument.font = UIFont.init(name: "Poppins-SemiBold", size: 20)!
+        lblDocument.numberOfLines = 0
+        lblDocument.textAlignment = .center
+        lblDocument.layer.masksToBounds = false
+        lblDocument.layer.shadowOffset = CGSize(width: 1, height: 1)
+        lblDocument.layer.rasterizationScale = UIScreen.main.scale
+        lblDocument.layer.shadowRadius = 3.0
+        lblDocument.layer.shadowOpacity = 1.0
+        lblDocument.layer.shadowColor = UIColor.black.cgColor
+        lblDocument.autoresizingMask = []
+        lblDocument.clipsToBounds = true
+        lblDocument.autoresizesSubviews = false
+        lblDocument.contentMode = .scaleAspectFill
+        return lblDocument
     }()
 
     private lazy var borderView = UIImageView()
@@ -157,14 +178,17 @@ open class PhotoBubbleView: UIView, MaximumLayoutWidthSpecificable, BackgroundSi
         self.placeholderIconView.image = self.photoMessageStyle.placeholderIconImage(viewModel: self.photoMessageViewModel)
         self.placeholderIconView.tintColor = self.photoMessageStyle.placeholderIconTintColor(viewModel: self.photoMessageViewModel)
 
-        if let image = self.photoMessageViewModel.image.value {
-            self.imageView.image = image
+        if let image = self.photoMessageViewModel.image.value, let title = self.photoMessageViewModel.title.value {
+            placeholderIconView.image = image
+            downloadImage()
+            
+            self.labelDocumentName.text = title
             self.placeholderIconView.isHidden = true
         } else {
             self.imageView.image = self.photoMessageStyle.placeholderBackgroundImage(viewModel: self.photoMessageViewModel)
             self.placeholderIconView.isHidden = self.photoMessageViewModel.transferStatus.value != .failed
         }
-
+        
         if let overlayColor = self.photoMessageStyle.overlayColor(viewModel: self.photoMessageViewModel) {
             self.overlayView.backgroundColor = overlayColor
             self.overlayView.alpha = 1
@@ -179,6 +203,16 @@ open class PhotoBubbleView: UIView, MaximumLayoutWidthSpecificable, BackgroundSi
         self.imageView.layer.mask = .bma_maskLayer(from: self.photoMessageStyle.maskingImage(viewModel: self.photoMessageViewModel))
     }
 
+    func downloadImage() {
+        if let imageUrlString = self.photoMessageViewModel.imageUrl.value {
+            if !imageUrlString.isEmpty {
+                if let imageUrl = URL(string: imageUrlString) {
+                    self.imageView.sd_setImage(with: imageUrl, completed: nil)
+                }
+                
+            }
+        }
+    }
     // MARK: Layout
 
     open override func sizeThatFits(_ size: CGSize) -> CGSize {
@@ -192,6 +226,7 @@ open class PhotoBubbleView: UIView, MaximumLayoutWidthSpecificable, BackgroundSi
         self.placeholderIconView.center = layout.visualCenter
         self.placeholderIconView.bounds = CGRect(origin: .zero, size: layout.placeholderFrame.size)
         self.imageView.bma_rect = layout.photoFrame
+        self.labelDocumentName.bma_rect = layout.photoFrame
         // Disables implicit layer animation
         CATransaction.performWithDisabledActions {
             self.imageView.layer.mask?.frame = self.imageView.layer.bounds
