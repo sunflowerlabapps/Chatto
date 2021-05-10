@@ -178,8 +178,8 @@ open class PhotoBubbleView: UIView, MaximumLayoutWidthSpecificable, BackgroundSi
         self.placeholderIconView.image = self.photoMessageStyle.placeholderIconImage(viewModel: self.photoMessageViewModel)
         self.placeholderIconView.tintColor = self.photoMessageStyle.placeholderIconTintColor(viewModel: self.photoMessageViewModel)
 
-        if let image = self.photoMessageViewModel.image.value, let title = self.photoMessageViewModel.title.value {
-            placeholderIconView.image = image
+        if let title = self.photoMessageViewModel.title.value {
+//            placeholderIconView.image = image
             downloadImage()
             
             self.labelDocumentName.text = title
